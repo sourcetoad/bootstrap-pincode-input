@@ -112,7 +112,7 @@
 			if (this.settings.hidedigits) {
 				this._pwcontainer = $('<div />').css("display", "none").appendTo(this._container);
 				this._pwfield = $('<input>').attr({
-					'type': 'password',
+					'type': 'number',
 					'pattern': this.settings.pattern,
 					'inputmode': this.settings.inputmode,
 					'id': 'preventautofill',
@@ -150,7 +150,7 @@
 				}
 				if (this.settings.hidedigits) {
 					// hide digits
-					input.attr('type', 'password');
+					input.attr('type', 'number');
 				} else {
 					// show digits, also include default value
 					input.val(currentValue[i]);
@@ -171,7 +171,7 @@
 					}).addClass('form-control pincode-input-text').appendTo(this._container);
 					if (this.settings.hidedigits) {
 						// hide digits
-						input.attr('type', 'password');
+						input.attr('type', 'number');
 					} else {
 						// show digits, also include default value
 						input.val(currentValue[i]);

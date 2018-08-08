@@ -171,7 +171,7 @@
 					}).addClass('form-control pincode-input-text').appendTo(this._container);
 					if (this.settings.hidedigits) {
 						// hide digits
-						input.attr('type', 'number');
+						input.attr('type', 'text');
 					} else {
 						// show digits, also include default value
 						input.val(currentValue[i]);

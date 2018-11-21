@@ -151,6 +151,7 @@
 				if (this.settings.hidedigits) {
 					// hide digits
 					input.attr('type', 'number');
+                    input.attr('pattern', '[0-9]*');
 				} else {
 					// show digits, also include default value
 					input.val(currentValue[i]);

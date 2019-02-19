@@ -25,10 +25,10 @@
 	// Create the defaults once
 	var pluginName = "pincodeInput";
 	var defaults = {
-		placeholders: undefined,							// seperate with a " "(space) to set an placeholder for each input box
+		placeholders: undefined,					    // seperate with a " "(space) to set an placeholder for each input box
 		inputs: 4,									    // 4 input boxes = code of 4 digits long
 		hidedigits: true,								// hide digits
-		patern: '[0-9]*',
+		pattern: '[0-9]*',
 		inputtype: 'number',
 		inputmode: 'numeric',
 		keydown: function (e) {
@@ -86,12 +86,9 @@
 			} else {
 				return isComplete;
 			}
-
-
 		},
 		buildInputBoxes: function () {
 			this._container = $('<div />').addClass('pincode-input-container');
-
 
 			var currentValue = [];
 			var placeholders = [];
@@ -120,77 +117,33 @@
 				}).appendTo(this._pwcontainer);
 			}
 
-			if (this._isTouchDevice()) {
-				// set main class
-				$(this._container).addClass("touch");
+            for (var i = 0; i < this.settings.inputs; i++) {
 
-				// For touch devices we build a html table directly under the pincode textbox. The textbox will become transparent
-				// This table is used for styling only, it will display how many 'digits' the user should fill in.
-				// With CSS letter-spacing we try to put every digit visually insize each table cell.
+                var input = $('<input>').attr({
+                    'type': this._isTouchDevice() ? 'number' : 'text',
+                    'maxlength': "1",
+                    'autocomplete': 'off',
+                    'placeholder': (placeholders[i] ? placeholders[i] : undefined)
+                }).addClass('form-control pincode-input-text').appendTo(this._container);
+                if (this.settings.hidedigits) {
+                    // hide digits
+                    input.attr('type', 'text');
+                } else {
+                    // show digits, also include default value
+                    input.val(currentValue[i]);
+                }
 
-				var wrapper = $('<div />').addClass('touchwrapper touch' + this.settings.inputs).appendTo(this._container);
-				var input = $('<input>').attr({
-					'type': this.settings.inputtype,
-					'pattern': this.settings.pattern,
-					'inputmode': this.settings.inputmode,
-					'placeholder': touchplaceholders,
-					'maxlength': this.settings.inputs,
-					'autocomplete': 'off'
-				}).addClass('form-control pincode-input-text').appendTo(wrapper);
+                if (i == 0) {
+                    input.addClass('first');
+                } else if (i == (this.settings.inputs - 1)) {
+                    input.addClass('last');
+                } else {
+                    input.addClass('mid');
+                }
 
-				var touchtable = $('<table>').addClass('touchtable').appendTo(wrapper);
-				var row = $('<tr/>').appendTo(touchtable);
-				// create touch background elements (for showing user how many digits must be entered)
-				for (var i = 0; i < this.settings.inputs; i++) {
-					if (i == (this.settings.inputs - 1)) {
-						$('<td/>').addClass('last').appendTo(row);
-					} else {
-						$('<td/>').appendTo(row);
-					}
-				}
-				if (this.settings.hidedigits) {
-					// hide digits
-					input.attr('type', 'number');
-                    input.attr('pattern', '[0-9]*');
-				} else {
-					// show digits, also include default value
-					input.val(currentValue[i]);
-				}
-
-				// add events
-				this._addEventsToInput(input, 1);
-
-			} else {
-				// for desktop mode we build one input for each digit
-				for (var i = 0; i < this.settings.inputs; i++) {
-
-					var input = $('<input>').attr({
-						'type': 'text',
-						'maxlength': "1",
-						'autocomplete': 'off',
-						'placeholder': (placeholders[i] ? placeholders[i] : undefined)
-					}).addClass('form-control pincode-input-text').appendTo(this._container);
-					if (this.settings.hidedigits) {
-						// hide digits
-						input.attr('type', 'text');
-					} else {
-						// show digits, also include default value
-						input.val(currentValue[i]);
-					}
-
-					if (i == 0) {
-						input.addClass('first');
-					} else if (i == (this.settings.inputs - 1)) {
-						input.addClass('last');
-					} else {
-						input.addClass('mid');
-					}
-
-					// add events
-					this._addEventsToInput(input, (i + 1));
-				}
-			}
-
+                // add events
+                this._addEventsToInput(input, (i + 1));
+            }
 
 			// error box
 			this._error = $('<div />').addClass('text-danger pincode-input-error').appendTo(this._container);
@@ -273,17 +226,15 @@
 
 			input.on('keyup', $.proxy(function (e) {
 				// after every keystroke we check if all inputs have a value, if yes we call complete callback
-				if (!this._isTouchDevice()) {
-					// on backspace or delete go to previous input box
-					if (e.keyCode == 8 || e.keyCode == 46) {
-						// goto previous
-						$(e.currentTarget).prev().select();
-						$(e.currentTarget).prev().focus();
-					} else {
-						if ($(e.currentTarget).val() != "") {
-							$(e.currentTarget).next().select();
-							$(e.currentTarget).next().focus();
-						}
+				// on backspace or delete go to previous input box
+				if (e.keyCode == 8 || e.keyCode == 46) {
+					// goto previous
+					$(e.currentTarget).prev().select();
+					$(e.currentTarget).prev().focus();
+				} else {
+					if ($(e.currentTarget).val() != "") {
+						$(e.currentTarget).next().select();
+						$(e.currentTarget).next().focus();
 					}
 				}
 

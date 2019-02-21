@@ -80,7 +80,7 @@
 
 			if (this._isTouchDevice()) {
 				// check if single input has it all
-				if (code.length == this.settings.inputs) {
+				if (code.length === this.settings.inputs) {
 					return true;
 				}
 			} else {
@@ -101,7 +101,7 @@
 
 			// If we do not hide digits, we need to include the current value of the input box
 			// This will only work if the current value is not longer than the number of input boxes.
-			if (this.settings.hidedigits == false && $(this.element).val() != "") {
+			if (this.settings.hidedigits === false && $(this.element).val() != "") {
 				currentValue = $(this.element).val().split("");
 			}
 
@@ -133,9 +133,9 @@
                     input.val(currentValue[i]);
                 }
 
-                if (i == 0) {
+                if (i === 0) {
                     input.addClass('first');
-                } else if (i == (this.settings.inputs - 1)) {
+                } else if (i === (this.settings.inputs - 1)) {
                     input.addClass('last');
                 } else {
                     input.addClass('mid');
@@ -194,11 +194,11 @@
 
 				// prevent more input for touch device (we can't limit it)
 				if (this._isTouchDevice()) {
-					if (e.keyCode == 8 || e.keyCode == 46) {
+					if (e.key === 'Backspace' || e.key === 'Delete') {
 						// do nothing on backspace and delete
 
 					} else {
-						if ($(this.element).val().length == this.settings.inputs) {
+						if ($(this.element).val().length === this.settings.inputs) {
 							e.preventDefault();
 							e.stopPropagation();
 						}
@@ -206,14 +206,7 @@
 
 				} else {
 					// in desktop mode, check if an number was entered
-
-					if (!(e.keyCode == 8                                // backspace key
-						|| e.keyCode == 9							// tab key
-						|| e.keyCode == 46                          // delete key
-						|| (e.keyCode >= 48 && e.keyCode <= 57)     // numbers on keyboard
-						|| (e.keyCode >= 96 && e.keyCode <= 105)   // number on keypad
-						|| (this.settings.inputtype != 'number' && e.keyCode >= 65 && e.keyCode <= 90))   // alfabet
-					) {
+					if (isNaN(e.key)) {
 						e.preventDefault();     // Prevent character input
 						e.stopPropagation();
 
@@ -227,10 +220,15 @@
 			input.on('keyup', $.proxy(function (e) {
 				// after every keystroke we check if all inputs have a value, if yes we call complete callback
 				// on backspace or delete go to previous input box
-				if (e.keyCode == 8 || e.keyCode == 46) {
-					// goto previous
-					$(e.currentTarget).prev().select();
-					$(e.currentTarget).prev().focus();
+				if (e.key === 'Backspace' || e.key === 'Delete') {
+                    if ($(e.currentTarget).val() != "") {
+                        $(e.currentTarget).val('');
+                    } else {
+                        // goto previous
+                        $(e.currentTarget).prev().select();
+                        $(e.currentTarget).prev().focus();
+                        $(e.currentTarget).prev().val('');
+                    }
 				} else {
 					if ($(e.currentTarget).val() != "") {
 						$(e.currentTarget).next().select();
@@ -254,10 +252,10 @@
 
 				// prevent more input for touch device (we can't limit it)
 				if (this._isTouchDevice()) {
-					if (e.keyCode == 8 || e.keyCode == 46) {
+					if (e.key === 'Delete' || e.key === 'Backspace') {
 						// do nothing on backspace and delete
 					} else {
-						if ($(this.element).val().length == this.settings.inputs) {
+						if ($(this.element).val().length === this.settings.inputs) {
 							$(e.currentTarget).blur();
 						}
 					}

@@ -218,21 +218,24 @@
 			}, this));
 
 			input.on('keyup', $.proxy(function (e) {
+			    var $current = $(e.currentTarget);
+			    var changed = $current.get(0);
 				// after every keystroke we check if all inputs have a value, if yes we call complete callback
 				// on backspace or delete go to previous input box
 				if (e.key === 'Backspace' || e.key === 'Delete') {
-                    if ($(e.currentTarget).val() != "") {
-                        $(e.currentTarget).val('');
+                    if ($current.val() != "") {
+                        $current.val('');
                     } else {
                         // goto previous
-                        $(e.currentTarget).prev().select();
-                        $(e.currentTarget).prev().focus();
-                        $(e.currentTarget).prev().val('');
+                        $current.prev().select();
+                        $current.prev().focus();
+                        $current.prev().val('');
+                        changed = $current.prev().get(0);
                     }
 				} else {
-					if ($(e.currentTarget).val() != "") {
-						$(e.currentTarget).next().select();
-						$(e.currentTarget).next().focus();
+					if ($current.val() != "") {
+						$current.next().select();
+						$current.next().focus();
 					}
 				}
 
@@ -246,7 +249,7 @@
 
 				//onchange event for each input
 				if (this.settings.change) {
-					this.settings.change(e.currentTarget, $(e.currentTarget).val(), inputnumber);
+					this.settings.change(changed, $current.val(), inputnumber);
 				}
 
 
@@ -256,7 +259,7 @@
 						// do nothing on backspace and delete
 					} else {
 						if ($(this.element).val().length === this.settings.inputs) {
-							$(e.currentTarget).blur();
+							$current.blur();
 						}
 					}
 

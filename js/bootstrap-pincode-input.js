@@ -122,7 +122,8 @@
                     'type': this._isTouchDevice() ? 'number' : 'text',
                     'maxlength': "1",
                     'autocomplete': 'off',
-                    'placeholder': (placeholders[i] ? placeholders[i] : undefined)
+                    'placeholder': (placeholders[i] ? placeholders[i] : undefined),
+                    'pattern': '[0-9]*'
                 }).addClass('form-control pincode-input-text').appendTo(this._container);
 
                 if (this.settings.hidedigits) {

@@ -18,9 +18,7 @@
  * ========================================================= */
 
 ;(function ($, window, document, undefined) {
-
     "use strict";
-
 
     // Create the defaults once
     var pluginName = "pincodeInput";
@@ -43,7 +41,6 @@
             //e = last keyup event
             //errorElement = error span next to to this, fill with html e.g. : $(errorElement).html("Code not correct");
         }
-
     };
 
     // The actual plugin constructor
@@ -101,7 +98,7 @@
 
             // If we do not hide digits, we need to include the current value of the input box
             // This will only work if the current value is not longer than the number of input boxes.
-            if (this.settings.hidedigits === false && $(this.element).val() != "") {
+            if (this.settings.hidedigits === false && $(this.element).val() !== "") {
                 currentValue = $(this.element).val().split("");
             }
 
@@ -178,6 +175,33 @@
                 return true;
             }
         },
+        _isErasureKey: function (event) {
+            var isErasure = false;
+            if (event.key !== undefined) {
+                isErasure = event.key === 'Backspace' || event.key === 'Delete';
+            } else {
+                // Fallback to the keyCode
+                // Backspace = 8
+                // Delete = 46
+                // noinspection JSDeprecatedSymbols
+                isErasure = event.keyCode === 8 || event.keyCode === 46;
+            }
+
+            return isErasure;
+        },
+        _isNumericKey: function (event) {
+            var isNumeric = false;
+            if (event.key !== undefined) {
+                isNumeric = !isNaN(event.key);
+            } else {
+                // Fallback to the keyCode
+                // noinspection JSDeprecatedSymbols
+                isNumeric = (event.keyCode >= 48 && event.keyCode <= 57)
+                    || (event.keyCode >= 96 || event.keyCode <= 105);
+            }
+
+            return isNumeric;
+        },
         _addEventsToInput: function (input, inputnumber) {
             input.on('focus', function (e) {
                 this.select();  //automatically select current value
@@ -195,8 +219,8 @@
                 var $current = $(e.currentTarget);
                 // after every keystroke we check if all inputs have a value, if yes we call complete callback
                 // on backspace or delete go to previous input box
-                if (e.key === 'Backspace' || e.key === 'Delete') {
-                    if ($current.val() != '') {
+                if (this._isErasureKey(e)) {
+                    if ($current.val() !== '' || $current.val() === undefined) {
                         $current.val('');
                     } else {
                         // goto previous
@@ -205,11 +229,10 @@
                         $current.prev().val('');
                     }
                 }
-
                 // prevent more input for touch device (we can't limit it)
                 if (!this._isTouchDevice()) {
                     // in desktop mode, check if an number was entered
-                    if (isNaN(e.key)) {
+                    if (this._isNumericKey(e)) {
                         e.preventDefault();     // Prevent character input
                         e.stopPropagation();
                     }
@@ -246,7 +269,7 @@
 
                 }
 
-                if ($current.val() != "") {
+                if ($current.val() !== "" || $current.val() === undefined) {
                     $current.next().select();
                     $current.next().focus();
                 }

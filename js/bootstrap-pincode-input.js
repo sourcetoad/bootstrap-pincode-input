@@ -229,10 +229,9 @@
                         $current.prev().val('');
                     }
                 }
-                // prevent more input for touch device (we can't limit it)
                 if (!this._isTouchDevice()) {
                     // in desktop mode, check if an number was entered
-                    if (this._isNumericKey(e)) {
+                    if (!this._isNumericKey(e)) {
                         e.preventDefault();     // Prevent character input
                         e.stopPropagation();
                     }
